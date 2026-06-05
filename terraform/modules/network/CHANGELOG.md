@@ -2,6 +2,13 @@
 
 Todos los cambios notables del modulo de redes seran documentados en este archivo.
 
+## [v1.0.1] - 2026-06-04
+
+### Fixed
+
+- Se ajusto el ejemplo basico para usar `flow_log_retention_in_days = 365` y cumplir `CKV_AWS_338`.
+- Se agrego justificacion Checkov para `CKV2_AWS_5`, porque el Security Group se exporta desde el modulo de red y se adjunta desde el root module mediante el modulo de computo.
+
 ## [v1.0.0] - 2026-06-04
 
 ### Added

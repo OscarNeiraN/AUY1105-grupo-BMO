@@ -2,6 +2,13 @@
 
 Todos los cambios notables de este proyecto seran documentados en este archivo.
 
+## [2.0.1] - 2026-06-04
+
+### Fixed
+
+- Se ajusto el ejemplo basico del modulo `network` para usar retencion de logs de 365 dias y cumplir `CKV_AWS_338`.
+- Se documento una excepcion especifica de Checkov `CKV2_AWS_5` en el Security Group del modulo `network`, ya que el modulo exporta el recurso y el root module lo adjunta a EC2 mediante `compute`.
+
 ## [2.0.0] - 2026-06-04
 
 ### Added

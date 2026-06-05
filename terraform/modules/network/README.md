@@ -77,6 +77,6 @@ Ver `examples/basic` para un ejemplo funcional minimo.
 
 ## Versionado
 
-Version actual: `v1.0.0`.
+Version actual: `v1.0.1`.
 
-En monorepo, usar el tag recomendado `network-v1.0.0`.
+En monorepo, usar el tag recomendado `network-v1.0.1`.

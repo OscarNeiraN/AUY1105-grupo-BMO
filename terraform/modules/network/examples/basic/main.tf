@@ -28,5 +28,5 @@ module "network" {
   availability_zone          = "us-east-1a"
   map_public_ip_on_launch    = false
   ssh_allowed_cidr           = "10.10.0.0/16"
-  flow_log_retention_in_days = 30
+  flow_log_retention_in_days = 365
 }

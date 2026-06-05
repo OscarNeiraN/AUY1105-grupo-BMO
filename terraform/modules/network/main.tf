@@ -163,6 +163,7 @@ resource "aws_route_table_association" "public" {
 }
 
 resource "aws_security_group" "app" {
+  #checkov:skip=CKV2_AWS_5: El modulo network exporta el Security Group; el root module lo adjunta a la instancia EC2 mediante el modulo compute.
   name        = "${var.project_name}-sg"
   description = "Security group que permite SSH entrante restringido y trafico saliente controlado"
   vpc_id      = aws_vpc.this.id
