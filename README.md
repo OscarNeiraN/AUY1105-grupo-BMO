@@ -160,5 +160,5 @@ En GitHub, crear releases con esos tags e incluir el resumen de cambios indicado
 | Nombre | Usuario GitHub |
 |---|---|
 | Oscar Neira | OscarNeiraN |
-| Brandon Figueroa | - |
-| Matias Araya | - |
+| Brandon Figueroa | gat0hub |
+| Matias Araya | maearaya |
