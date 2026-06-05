@@ -2,6 +2,15 @@
 
 Todos los cambios notables de este proyecto seran documentados en este archivo.
 
+## [2.0.2] - 2026-06-04
+
+### Changed
+
+- Se actualizo `.gitignore` para ignorar `**/.terraform.lock.hcl`.
+- Se removieron del repositorio los lock files de Terraform del root module y de los ejemplos de modulos.
+- Se documento en `README.md` que los `.terraform.lock.hcl` no se versionan y no deben mostrarse en GitHub.
+- Se actualizo la documentacion de versionado para los tags `v2.0.2`, `network-v1.0.2` y `compute-v1.0.1`.
+
 ## [2.0.1] - 2026-06-04
 
 ### Fixed

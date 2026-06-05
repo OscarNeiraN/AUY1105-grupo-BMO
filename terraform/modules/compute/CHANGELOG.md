@@ -2,6 +2,13 @@
 
 Todos los cambios notables del modulo de computo seran documentados en este archivo.
 
+## [v1.0.1] - 2026-06-04
+
+### Changed
+
+- Se documento en el README del modulo que los ejemplos no versionan `.terraform.lock.hcl`.
+- Se removio el lock file del ejemplo basico para cumplir la politica de archivos ignorados del repositorio.
+
 ## [v1.0.0] - 2026-06-04
 
 ### Added

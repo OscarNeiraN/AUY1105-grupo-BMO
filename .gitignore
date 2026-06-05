@@ -16,6 +16,7 @@ tfplan.json
 
 # Terraform working directories
 .terraform/
+**/.terraform.lock.hcl
 
 # Terraform override files
 override.tf

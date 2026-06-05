@@ -71,8 +71,10 @@ module "compute" {
 
 Ver `examples/basic` para un ejemplo funcional minimo.
 
+Los ejemplos no versionan `.terraform.lock.hcl`; ese archivo se ignora por politica del repositorio para evitar que aparezca en GitHub.
+
 ## Versionado
 
-Version actual: `v1.0.0`.
+Version actual: `v1.0.1`.
 
-En monorepo, usar el tag recomendado `compute-v1.0.0`.
+En monorepo, usar el tag recomendado `compute-v1.0.1`.

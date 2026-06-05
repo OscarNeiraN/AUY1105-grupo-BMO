@@ -2,7 +2,7 @@
 
 ## Infraestructura como Codigo II - Evaluacion Parcial 2
 
-Este repositorio contiene la infraestructura AWS definida con Terraform y organizada como un monorepo. La pauta menciona repositorios separados para el modulo de redes y el modulo de computo, pero esta entrega mantiene todo en un unico repositorio, usando `terraform/modules/network` y `terraform/modules/compute` como modulos locales reutilizables.
+Este repositorio contiene la infraestructura AWS definida con Terraform y organizada como monorepo. La pauta menciona repositorios separados para el modulo de redes y el modulo de computo, pero esta entrega mantiene todo en un unico repositorio, usando `terraform/modules/network` y `terraform/modules/compute` como modulos locales reutilizables.
 
 ## Objetivos
 
@@ -16,45 +16,45 @@ Este repositorio contiene la infraestructura AWS definida con Terraform y organi
 
 ```text
 AUY1105-grupo-BMO/
-├── .github/
-│   └── workflows/
-│       ├── main.yaml
-│       ├── opa-validation.yaml
-│       ├── tflint-checkov.yaml
-│       └── validate.yaml
-├── policies/
-│   ├── no_public_ssh.rego
-│   └── only_t2_micro.rego
-├── terraform/
-│   ├── main.tf
-│   ├── moved.tf
-│   ├── outputs.tf
-│   ├── provider.tf
-│   ├── terraform.tfvars
-│   ├── variables.tf
-│   ├── versions.tf
-│   └── modules/
-│       ├── network/
-│       │   ├── CHANGELOG.md
-│       │   ├── README.md
-│       │   ├── VERSION
-│       │   ├── examples/
-│       │   ├── main.tf
-│       │   ├── outputs.tf
-│       │   ├── variables.tf
-│       │   └── versions.tf
-│       └── compute/
-│           ├── CHANGELOG.md
-│           ├── README.md
-│           ├── VERSION
-│           ├── examples/
-│           ├── main.tf
-│           ├── outputs.tf
-│           ├── variables.tf
-│           └── versions.tf
-├── .gitignore
-├── CHANGELOG.md
-└── README.md
+|-- .github/
+|   `-- workflows/
+|       |-- main.yaml
+|       |-- opa-validation.yaml
+|       |-- tflint-checkov.yaml
+|       `-- validate.yaml
+|-- policies/
+|   |-- no_public_ssh.rego
+|   `-- only_t2_micro.rego
+|-- terraform/
+|   |-- main.tf
+|   |-- moved.tf
+|   |-- outputs.tf
+|   |-- provider.tf
+|   |-- terraform.tfvars
+|   |-- variables.tf
+|   |-- versions.tf
+|   `-- modules/
+|       |-- network/
+|       |   |-- CHANGELOG.md
+|       |   |-- README.md
+|       |   |-- VERSION
+|       |   |-- examples/
+|       |   |-- main.tf
+|       |   |-- outputs.tf
+|       |   |-- variables.tf
+|       |   `-- versions.tf
+|       `-- compute/
+|           |-- CHANGELOG.md
+|           |-- README.md
+|           |-- VERSION
+|           |-- examples/
+|           |-- main.tf
+|           |-- outputs.tf
+|           |-- variables.tf
+|           `-- versions.tf
+|-- .gitignore
+|-- CHANGELOG.md
+`-- README.md
 ```
 
 ## Modulos
@@ -118,9 +118,15 @@ terraform apply
 
 Terraform carga automaticamente `terraform.tfvars`. Este archivo contiene datos no sensibles del laboratorio, como CIDR, region, AMI y tipo de instancia. No se deben guardar secretos, claves privadas ni credenciales AWS en archivos versionados.
 
+## Archivos versionados
+
+- `terraform/terraform.tfvars` se versiona porque contiene datos no sensibles de laboratorio.
+- `.terraform/`, estados, planes, claves privadas y credenciales se ignoran en `.gitignore`.
+- `**/.terraform.lock.hcl` se ignora y fue removido del repositorio para que no aparezca en GitHub.
+
 ## Automatizacion
 
-El pipeline se activa en Pull Requests hacia `main` mediante `.github/workflows/main.yaml` y llama workflows reutilizables:
+El pipeline se activa en pushes a `main` y Pull Requests hacia `main` mediante `.github/workflows/main.yaml`. El workflow central llama workflows reutilizables:
 
 1. TFLint recursivo para revisar root module, modulos y ejemplos.
 2. Checkov para analisis de seguridad Terraform.
@@ -131,19 +137,20 @@ El pipeline se activa en Pull Requests hacia `main` mediante `.github/workflows/
 
 ## Versionado semantico
 
-Los modulos documentan su version inicial estable como `v1.0.0`:
+Version actual del repositorio principal: `v2.0.2`.
 
-- `terraform/modules/network/VERSION`
-- `terraform/modules/network/CHANGELOG.md`
-- `terraform/modules/compute/VERSION`
-- `terraform/modules/compute/CHANGELOG.md`
+Versiones actuales de modulos:
 
-Como el trabajo se mantiene en un solo repositorio, se recomienda etiquetar releases por modulo:
+- Network: `network-v1.0.2`
+- Compute: `compute-v1.0.1`
+
+Como el trabajo se mantiene en un solo repositorio, se usan tags por modulo y tag general del repositorio:
 
 ```bash
-git tag network-v1.0.0
-git tag compute-v1.0.0
-git push origin network-v1.0.0 compute-v1.0.0
+git tag v2.0.2
+git tag network-v1.0.2
+git tag compute-v1.0.1
+git push origin v2.0.2 network-v1.0.2 compute-v1.0.1
 ```
 
 En GitHub, crear releases con esos tags e incluir el resumen de cambios indicado en cada `CHANGELOG.md`.

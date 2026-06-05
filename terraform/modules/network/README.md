@@ -75,8 +75,10 @@ module "network" {
 
 Ver `examples/basic` para un ejemplo funcional minimo.
 
+Los ejemplos no versionan `.terraform.lock.hcl`; ese archivo se ignora por politica del repositorio para evitar que aparezca en GitHub.
+
 ## Versionado
 
-Version actual: `v1.0.1`.
+Version actual: `v1.0.2`.
 
-En monorepo, usar el tag recomendado `network-v1.0.1`.
+En monorepo, usar el tag recomendado `network-v1.0.2`.
