@@ -1,26 +1,41 @@
 # Changelog
 
-Todos los cambios notables de este proyecto serán documentados en este archivo.
+Todos los cambios notables de este proyecto seran documentados en este archivo.
+
+## [2.0.0] - 2026-06-04
+
+### Added
+
+- Se agrego estructura monorepo con modulos Terraform locales para redes y computo.
+- Se agrego `terraform/modules/network` con `main.tf`, `variables.tf`, `outputs.tf`, `versions.tf`, `README.md`, `CHANGELOG.md`, `VERSION` y ejemplos.
+- Se agrego `terraform/modules/compute` con `main.tf`, `variables.tf`, `outputs.tf`, `versions.tf`, `README.md`, `CHANGELOG.md`, `VERSION` y ejemplos.
+- Se agrego `terraform/terraform.tfvars` con datos no sensibles de infraestructura.
+- Se agrego `terraform/moved.tf` para conservar trazabilidad de estado al pasar recursos del root module a modulos.
+- Se agregaron outputs `subnet_ids`, `instance_id` e `instance_ip` para cumplir los minimos de la pauta.
+- Se agrego `terraform/versions.tf` para centralizar version requerida de Terraform y proveedor AWS.
+
+### Changed
+
+- `terraform/main.tf` ahora actua como controlador central y solo llama los modulos `network` y `compute`.
+- `terraform/variables.tf` ya no contiene valores por defecto de infraestructura; los valores se entregan mediante `terraform.tfvars`.
+- El workflow de TFLint ahora usa revision recursiva para incluir root module, modulos y ejemplos.
+- Se actualizo `README.md` para documentar la Evaluacion Parcial 2, la estructura monorepo, los modulos y el versionado semantico.
+
+### Security
+
+- Se mantiene IMDSv2 requerido para EC2.
+- Se mantiene cifrado del volumen raiz de EC2 mediante variable.
+- Se mantiene control OPA para bloquear SSH publico y restringir instancias a `t2.micro`.
 
 ## [1.0.0] - 2026-04-28
 
-### Añadido (Added)
+### Added
 
-- **Repositorio (PR #1)**: Configuración inicial del repositorio. Creación de los archivos base `README.md`, `.gitignore` (excluyendo secretos y archivos de estado de Terraform) y `CHANGELOG.md`.
-- **Infraestructura (PR #2)**: Creación del código Terraform (`main.tf` y `provider.tf`) usando el proveedor AWS v5.x. Se implementó:
-  - VPC con CIDR `10.1.0.0/16`.
-  - Dos subredes públicas con máscara `/24`.
-  - Internet Gateway y Tablas de Enrutamiento asociadas.
-  - Grupo de Seguridad (Security Group) para permitir tráfico SSH.
-  - Instancia EC2 tipo `t2.micro` con imagen AMI dinámica de Ubuntu 24.04 LTS.
-- **Automatización (PR #3)**: Implementación de flujo CI/CD con GitHub Actions (`.github/workflows/`). El pipeline consta de tres etapas secuenciales:
-  - Análisis estático con TFLint.
-  - Análisis de seguridad con Checkov.
-  - Validación de sintaxis con Terraform Validate.
-- **Políticas OPA (PR #4)**: Creación del directorio `policies/`. Se definieron dos reglas estrictas de cumplimiento:
-  - Denegar la creación de instancias que no sean del tipo `t2.micro`.
-  - Denegar la apertura del puerto 22 (SSH) hacia todo internet (`0.0.0.0/0`).
+- Configuracion inicial del repositorio con `README.md`, `.gitignore` y `CHANGELOG.md`.
+- Infraestructura base con VPC, subnet, Internet Gateway, Route Table, Security Group e instancia EC2.
+- Pipeline GitHub Actions con TFLint, Checkov, Terraform Validate y OPA.
+- Politicas OPA para denegar SSH publico y tipos de instancia distintos de `t2.micro`.
 
-### Corregido / Seguridad (Security)
+### Fixed
 
-- **Cierre de vulnerabilidad (PR #5)**: Se actualizó el Security Group en `main.tf` para remover el acceso SSH público (`0.0.0.0/0`) que fue detectado por los análisis de seguridad, restringiéndolo a una IP específica (`190.0.0.1/32`) para cumplir con las políticas de OPA.
+- Se restringio el acceso SSH para no permitir `0.0.0.0/0`.

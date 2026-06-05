@@ -28,7 +28,7 @@ jobs:
         working-directory: ${{ inputs.path }}
 
       - name: Ejecutar TFLint
-        run: tflint --format compact
+        run: tflint --recursive --format compact
         working-directory: ${{ inputs.path }}
 
   checkov:

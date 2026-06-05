@@ -1,117 +1,157 @@
-# AUY1105-grupo-N
-## Infraestructura como Código II — Evaluación Parcial N°1
+# AUY1105-grupo-BMO
 
-## Propósito General
+## Infraestructura como Codigo II - Evaluacion Parcial 2
 
-Este repositorio contiene el código de infraestructura como código (IaC) desarrollado con **Terraform** para desplegar una infraestructura básica en AWS, junto con un pipeline de automatización mediante **GitHub Actions** que analiza la calidad y seguridad del código.
+Este repositorio contiene la infraestructura AWS definida con Terraform y organizada como un monorepo. La pauta menciona repositorios separados para el modulo de redes y el modulo de computo, pero esta entrega mantiene todo en un unico repositorio, usando `terraform/modules/network` y `terraform/modules/compute` como modulos locales reutilizables.
 
----
+## Objetivos
 
-## Objetivos del Repositorio
+- Desacoplar la infraestructura de la Evaluacion Parcial 1 en modulos reutilizables.
+- Usar un `main.tf` raiz como controlador central de la infraestructura.
+- Parametrizar los datos de infraestructura mediante `terraform/terraform.tfvars`.
+- Mantener validaciones de calidad, seguridad y politicas con GitHub Actions, TFLint, Checkov, Terraform Validate y OPA.
+- Documentar los modulos con ejemplos, variables, outputs, dependencias y versionado semantico.
 
-- Definir infraestructura en AWS usando Terraform (VPC, Subnets, Security Groups, EC2).
-- Automatizar el análisis de calidad con TFLint.
-- Automatizar el análisis de seguridad con Checkov.
-- Validar el código Terraform con terraform validate.
-- Implementar políticas de seguridad con Open Policy Agent.
-- Aplicar buenas prácticas de revisión de código mediante Pull Requests.
+## Estructura
 
----
-
-## Estructura del Repositorio
-
-```
-AUY1105-grupo-N/
+```text
+AUY1105-grupo-BMO/
 ├── .github/
 │   └── workflows/
-│       └── terraform-ci.yml       # Workflow GitHub Actions
-├── terraform/
-│   ├── main.tf                    # Recursos principales (VPC, EC2, etc.)
-│   ├── variables.tf               # Variables del proyecto
-│   ├── outputs.tf                 # Outputs de Terraform
-│   └── provider.tf                # Configuración del proveedor AWS
+│       ├── main.yaml
+│       ├── opa-validation.yaml
+│       ├── tflint-checkov.yaml
+│       └── validate.yaml
 ├── policies/
-│   ├── no_public_ssh.rego         # Política OPA: bloquear SSH público
-│   └── only_t2_micro.rego         # Política OPA: solo instancias t2.micro
+│   ├── no_public_ssh.rego
+│   └── only_t2_micro.rego
+├── terraform/
+│   ├── main.tf
+│   ├── moved.tf
+│   ├── outputs.tf
+│   ├── provider.tf
+│   ├── terraform.tfvars
+│   ├── variables.tf
+│   ├── versions.tf
+│   └── modules/
+│       ├── network/
+│       │   ├── CHANGELOG.md
+│       │   ├── README.md
+│       │   ├── VERSION
+│       │   ├── examples/
+│       │   ├── main.tf
+│       │   ├── outputs.tf
+│       │   ├── variables.tf
+│       │   └── versions.tf
+│       └── compute/
+│           ├── CHANGELOG.md
+│           ├── README.md
+│           ├── VERSION
+│           ├── examples/
+│           ├── main.tf
+│           ├── outputs.tf
+│           ├── variables.tf
+│           └── versions.tf
 ├── .gitignore
 ├── CHANGELOG.md
 └── README.md
 ```
 
----
+## Modulos
 
-## Definición del Código Terraform
+### Network
 
-El código Terraform define los siguientes recursos en AWS:
+Ruta: `terraform/modules/network`
 
-| Recurso | Nombre | Descripción |
-|---|---|---|
-| VPC | AUY1105-duocapp-vpc | Red principal con CIDR 10.1.0.0/16 |
-| Subnet pública | AUY1105-duocapp-subnet | Subred con máscara /24 |
-| Security Group | AUY1105-duocapp-sg | Permite SSH entrante, todo el tráfico saliente |
-| EC2 Instance | AUY1105-duocapp-ec2 | Ubuntu 24.04 LTS, tipo t2.micro |
+Gestiona recursos de red y observabilidad:
 
-### Proveedor
-- Cloud: Amazon Web Services (AWS)
-- Versión del proveedor: ~> 6.0 (última versión)
+- VPC.
+- Default Security Group administrado.
+- Subnet publica.
+- Internet Gateway.
+- Route Table y asociacion.
+- Security Group de aplicacion.
+- KMS, CloudWatch Log Group, IAM Role y VPC Flow Logs.
 
----
+Outputs minimos de la pauta:
 
-## Instrucciones Básicas de Uso
+- `vpc_id`
+- `subnet_ids`
 
-### Pre-requisitos
-- Tener instalado Terraform
-- Tener configuradas las credenciales de AWS (aws configure)
-- Tener instalado TFLint
-- Tener instalado Checkov
+Tambien expone `subnet_id` y `security_group_id` para integrar el modulo de computo.
 
-### Pasos para desplegar
+### Compute
+
+Ruta: `terraform/modules/compute`
+
+Gestiona recursos de computo:
+
+- IAM Role para EC2.
+- IAM Instance Profile.
+- Instancia EC2 con IMDSv2 requerido, volumen raiz cifrado, monitoreo y EBS optimization parametrizados.
+
+Outputs minimos de la pauta:
+
+- `instance_id`
+- `instance_ip`
+
+Tambien mantiene alias compatibles `ec2_instance_id` y `ec2_public_ip`.
+
+## Uso del Terraform principal
+
+Pre-requisitos:
+
+- Terraform instalado.
+- Credenciales AWS configuradas.
+- Permisos AWS para EC2, VPC, IAM, KMS y CloudWatch Logs.
+
+Comandos:
 
 ```bash
-# 1. Clonar el repositorio
-git clone https://github.com/<tu-usuario>/AUY1105-grupo-N.git
-cd AUY1105-grupo-N
-
-# 2. Inicializar Terraform
 cd terraform
 terraform init
-
-# 3. Validar el código
+terraform fmt -check -recursive
 terraform validate
-
-# 4. Ver los cambios planificados
 terraform plan
-
-# 5. Aplicar la infraestructura
 terraform apply
 ```
 
-### Ejecutar análisis manualmente
+Terraform carga automaticamente `terraform.tfvars`. Este archivo contiene datos no sensibles del laboratorio, como CIDR, region, AMI y tipo de instancia. No se deben guardar secretos, claves privadas ni credenciales AWS en archivos versionados.
+
+## Automatizacion
+
+El pipeline se activa en Pull Requests hacia `main` mediante `.github/workflows/main.yaml` y llama workflows reutilizables:
+
+1. TFLint recursivo para revisar root module, modulos y ejemplos.
+2. Checkov para analisis de seguridad Terraform.
+3. `terraform fmt` y `terraform validate`.
+4. OPA contra el plan JSON para validar politicas:
+   - Bloquear SSH publico desde `0.0.0.0/0`.
+   - Permitir solo instancias `t2.micro`.
+
+## Versionado semantico
+
+Los modulos documentan su version inicial estable como `v1.0.0`:
+
+- `terraform/modules/network/VERSION`
+- `terraform/modules/network/CHANGELOG.md`
+- `terraform/modules/compute/VERSION`
+- `terraform/modules/compute/CHANGELOG.md`
+
+Como el trabajo se mantiene en un solo repositorio, se recomienda etiquetar releases por modulo:
 
 ```bash
-# Análisis estático con TFLint
-tflint --chdir=terraform/
-
-# Análisis de seguridad con Checkov
-checkov -d terraform/
+git tag network-v1.0.0
+git tag compute-v1.0.0
+git push origin network-v1.0.0 compute-v1.0.0
 ```
 
----
+En GitHub, crear releases con esos tags e incluir el resumen de cambios indicado en cada `CHANGELOG.md`.
 
-## Pipeline CI/CD (GitHub Actions)
-
-El workflow se activa automáticamente en cada Pull Request hacia main y ejecuta:
-
-1. Análisis estático → TFLint
-2. Análisis de seguridad → Checkov
-3. Validación → terraform validate
-
----
-
-## Integrante
+## Integrantes
 
 | Nombre | Usuario GitHub |
 |---|---|
-| Integrante | Oscar Neira |
-| Integrante | Brandon Figueroa |
-| Integrante | Matias Araya |
+| Oscar Neira | OscarNeiraN |
+| Brandon Figueroa | - |
+| Matias Araya | - |
