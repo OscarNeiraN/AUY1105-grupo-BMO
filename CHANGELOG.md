@@ -36,6 +36,7 @@ Todos los cambios notables de este proyecto seran documentados en este archivo.
 - `terraform/variables.tf` ya no contiene valores por defecto de infraestructura; los valores se entregan mediante `terraform.tfvars`.
 - El workflow de TFLint ahora usa revision recursiva para incluir root module, modulos y ejemplos.
 - Se actualizo `README.md` para documentar la Evaluacion Parcial 2, la estructura monorepo, los modulos y el versionado semantico.
+- Solucion a llamado de modulo Network "not found".
 
 ### Security
 
