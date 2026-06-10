@@ -1,6 +1,9 @@
 name: Terraform CI - Pipeline Central
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -19,3 +22,15 @@ jobs:
     uses: ./.github/workflows/validate.yaml
     with:
       path: terraform/
+
+  politicas:
+    name: Llamar validacion politicas OPA
+    needs: validacion
+    uses: ./.github/workflows/opa-validation.yaml
+    with:
+      path: terraform/
+      policies_path: policies/
+    secrets:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
